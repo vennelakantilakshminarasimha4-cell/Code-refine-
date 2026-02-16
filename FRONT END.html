@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Code Review & Rewrite Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-gray-800 p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-indigo-400">AI Code Review & Rewrite Agent</h1>
+    <span class="text-sm text-gray-400">FastAPI + Groq + Llama 3.3 70B</span>
+  </header>
+
+  <!-- Main Layout -->
+  <main class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- Input Section -->
+    <div class="bg-gray-900 rounded-2xl shadow-lg p-5 flex flex-col gap-4">
+      <h2 class="text-xl font-semibold">Submit Your Code</h2>
+
+      <select id="language" class="bg-gray-800 p-2 rounded-lg">
+        <option value="javascript">JavaScript</option>
+        <option value="python">Python</option>
+        <option value="java">Java</option>
+        <option value="cpp">C++</option>
+        <option value="c">C</option>
+      </select>
+
+      <textarea id="codeInput" rows="14" placeholder="Paste your code here..."
+        class="bg-black text-green-400 font-mono p-3 rounded-xl w-full"></textarea>
+
+      <button id="reviewBtn" class="bg-indigo-500 hover:bg-indigo-600 transition rounded-xl p-3 font-semibold">
+        Review & Rewrite Code
+      </button>
+
+      <div id="status" class="text-sm text-gray-400"></div>
+    </div>
+
+    <!-- Output Section -->
+    <div class="flex flex-col gap-6">
+
+      <!-- Review Output -->
+      <div class="bg-gray-900 rounded-2xl shadow-lg p-5">
+        <h2 class="text-xl font-semibold mb-3">AI Review</h2>
+        <pre id="reviewOutput" class="whitespace-pre-wrap text-sm text-gray-200"></pre>
+      </div>
+
+      <!-- Rewritten Code -->
+      <div class="bg-gray-900 rounded-2xl shadow-lg p-5">
+        <h2 class="text-xl font-semibold mb-3">Optimized Code</h2>
+        <pre id="rewriteOutput" class="bg-black text-green-400 p-3 rounded-xl overflow-auto"></pre>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    const btn = document.getElementById('reviewBtn');
+    const status = document.getElementById('status');
+
+    btn.addEventListener('click', async () => {
+      const code = document.getElementById('codeInput').value;
+      const language = document.getElementById('language').value;
+
+      if (!code.trim()) {
+        alert('Please paste your code first');
+        return;
+      }
+
+      status.innerText = "Analyzing code with AI...";
+
+      try {
+        // Change this URL to your FastAPI backend endpoint
+        const response = await fetch('http://localhost:8000/review', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ code, language })
+        });
+
+        const data = await response.json();
+
+        document.getElementById('reviewOutput').textContent = data.review || '';
+        document.getElementById('rewriteOutput').textContent = data.rewritten_code || '';
+
+        status.innerText = "Review completed ✔";
+      } catch (err) {
+        console.error(err);
+        status.innerText = "Error connecting to backend";
+      }
+    });
+  </script>
+
+</body>
+</html>
