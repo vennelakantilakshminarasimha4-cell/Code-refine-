@@ -74,8 +74,8 @@
 
       try {
         // Change this URL to your FastAPI backend endpoint
-        const response = await fetch('http://localhost:8000/review', {
-          method: 'POST',
+       const response = await fetch('https://jeannie-satirisable-polygamously.ngrok-free.dev/api/review', {
+        method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
@@ -84,9 +84,8 @@
 
         const data = await response.json();
 
-        document.getElementById('reviewOutput').textContent = data.review || '';
-        document.getElementById('rewriteOutput').textContent = data.rewritten_code || '';
-
+        document.getElementById('reviewOutput').textContent = data.optimized_code;
+        document.getElementById('rewriteOutput').textContent = data.optimized_code;
         status.innerText = "Review completed ✔";
       } catch (err) {
         console.error(err);
